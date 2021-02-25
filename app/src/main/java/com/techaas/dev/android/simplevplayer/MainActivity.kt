@@ -11,18 +11,21 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
+import com.techaas.dev.android.simplevplayer.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        val videoText = findViewById<TextView>(R.id.video_time)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         val video = VideoView(this)
         video.setVideoPath("android.resource://" + packageName + "/" + R.raw.sample)
-
         video.layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT)
@@ -35,7 +38,7 @@ class MainActivity : AppCompatActivity() {
             Thread {
                 do {
                     runOnUiThread {
-                        videoText.text = "%.2f s".format((video.currentPosition / 1000.0))
+                        binding.videoTime.text = "%.2f s".format((video.currentPosition / 1000.0))
                     }
                     try {
                         Thread.sleep(100)
@@ -47,7 +50,7 @@ class MainActivity : AppCompatActivity() {
             }.start()
         }
 
-        video.setOnTouchListener{ v, event ->
+        video.setOnTouchListener { v, event ->
             when (event.action) {
                 MotionEvent.ACTION_UP -> {
                     Log.i(TAG, "setOnTouchListener")
@@ -71,8 +74,7 @@ class MainActivity : AppCompatActivity() {
         params.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE)
         params.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE)
 
-        val relativeLayout = findViewById<RelativeLayout>(R.id.base_layout)
-        relativeLayout.addView(video, params)
+        binding.baseLayout.addView(video, params)
     }
 
     companion object {
